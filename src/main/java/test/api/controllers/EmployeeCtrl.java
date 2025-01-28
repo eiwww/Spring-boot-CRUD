@@ -40,6 +40,7 @@ public class EmployeeCtrl {
 	}
 
 	@GetMapping("{id}")
+	@PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
 	public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
 		Employee employee = employeeRepo.findById(id)
 		.orElseThrow(() -> new ResourceNotFoundException("Employee not exist id = " + id));
@@ -48,11 +49,13 @@ public class EmployeeCtrl {
 	}
 	
 	@PostMapping("")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Employee createEmployee(@RequestBody EmployeeRequest employee) {
 		return employeeService.createEmployee(employee);
 	}
 	
 	@PutMapping("{id}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @RequestBody Employee employeeData) {
 		Employee employee = employeeRepo.findById(id)
 		.orElseThrow(() -> new ResourceNotFoundException("Employee not exist id = " + id));
@@ -66,6 +69,7 @@ public class EmployeeCtrl {
 	}
 
 	@DeleteMapping("{id}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<Map<String, Boolean>> deleteEmployee(@PathVariable Long id) {
 		Employee employee = employeeRepo.findById(id)
 		.orElseThrow(() -> new ResourceNotFoundException("Employee not exist id = " + id));

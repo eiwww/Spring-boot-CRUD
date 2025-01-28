@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import test.api.components.JwtService;
 import test.api.entities.RefreshToken;
 import test.api.models.AuthRequest;
+import test.api.models.RefreshTokenRequest;
 import test.api.services.RefreshTokenService;
 
 
@@ -43,7 +44,7 @@ public class Login {
             // Build the response map
             Map<String, String> response = new HashMap<>();
             response.put("accessToken", accessToken);
-            response.put("Token", refreshToken.getToken());
+            response.put("token", refreshToken.getToken());
 
             return ResponseEntity.ok(response);
         } else {
@@ -52,11 +53,17 @@ public class Login {
     }
 
     @PostMapping("/refreshToken")
-    public String postMethodName(@RequestBody String entity) {
-        
-        
-        return entity;
+    public ResponseEntity<Map<String, String>> createRefreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+        return refreshTokenService.findByToken(refreshTokenRequest.token())
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    String accessToken = jwtService.GenerateToken(user.getUsername());
+                    Map<String, String> response = new HashMap<>();
+                    response.put("accessToken", accessToken);
+                    response.put("token", refreshTokenRequest.token());
+                    return ResponseEntity.ok(response);
+                }).orElseThrow(() -> new RuntimeException("Autherize error"));
     }
-    
     
 }

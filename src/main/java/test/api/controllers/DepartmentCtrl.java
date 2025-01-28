@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,11 +34,13 @@ public class DepartmentCtrl {
     private DepartmentService departmentService;
     
     @GetMapping("")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public List<Department> getAllDepartment() {
         return departmentRepo.findAll();
     }
 
     @GetMapping("{id}")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<Department> getDepartmentById(@PathVariable Long id) {
         Department department = departmentRepo.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Department not exist id = " + id));
@@ -45,16 +48,19 @@ public class DepartmentCtrl {
     }
     
     @PostMapping("")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Department createDepartment(@RequestBody DepartmentRequest department) {
         return departmentService.createDepartment(department);
     }
 
     @PutMapping("")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Department updateDepartment(@PathVariable Long id, @RequestBody DepartmentRequest departmentRequest) {
         return departmentService.updateDepartment(id, departmentRequest);
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Map<String, Boolean>> deleteDepartment(@PathVariable Long id) {
         return ResponseEntity.ok(departmentService.deleteDepartment(id));
     }
