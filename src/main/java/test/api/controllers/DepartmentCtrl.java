@@ -53,7 +53,7 @@ public class DepartmentCtrl {
         return departmentService.createDepartment(department);
     }
 
-    @PutMapping("")
+    @PutMapping("{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Department updateDepartment(@PathVariable Long id, @RequestBody DepartmentRequest departmentRequest) {
         return departmentService.updateDepartment(id, departmentRequest);

@@ -15,7 +15,11 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "employees")
-public class Employee {
+public class Employee extends BaseTimeEntity{
+
+	public static enum Gender {
+		male, female;
+	}
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +34,8 @@ public class Employee {
 	@Column(name = "email")
 	private String email;
 
+	Gender gender;
+
 	@ManyToOne
 	@JoinColumn(name = "department_id", nullable=true)
 	private Department department;
@@ -42,11 +48,12 @@ public class Employee {
 	
 	}
 
-	public Employee(String firstName, String lastName, String email, Department department) {
+	public Employee(String firstName, String lastName, String email, Gender gender, Department department) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
+		this.gender = gender;
 		this.department = department;
 	}
 
@@ -73,6 +80,12 @@ public class Employee {
 	}
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	public Gender getGender(){
+		return gender;
+	}
+	public void setGender(Gender gender) {
+		this.gender = gender;
 	}
 	public Department getDepartment() {
 		return department;

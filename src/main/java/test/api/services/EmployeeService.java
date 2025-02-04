@@ -29,6 +29,7 @@ public class EmployeeService {
 			employeeRequest.firstname(),
 			employeeRequest.lastname(),
 			employeeRequest.email(),
+			Employee.Gender.valueOf(employeeRequest.gender()),
 			department
 		);
 		return employeeRepo.save(employee);
@@ -44,6 +45,7 @@ public class EmployeeService {
 		employee.setFirstname(employeeRequest.firstname());
 		employee.setLastname(employeeRequest.lastname());
 		employee.setEmail(employeeRequest.email());
+		employee.setGender(Employee.Gender.valueOf(employeeRequest.gender()));
 		employee.setDepartment(department);
 		
 		Employee employeeUpdate = employeeRepo.save(employee);

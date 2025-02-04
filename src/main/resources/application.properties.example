@@ -14,3 +14,5 @@ server.servlet.context-path=/api/v1
 server.forward-headers-strategy=framework
 
 file.upload-dir=
+
+JWT-SECRET-KEY=

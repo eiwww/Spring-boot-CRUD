@@ -24,7 +24,7 @@ public class RefreshTokenService {
         RefreshToken refreshToken = RefreshToken.builder()
             .user(userRepo.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found")))
             .token(UUID.randomUUID().toString())
-            .expiryDate(Instant.now().plusMillis(180000))
+            .expiryDate(Instant.now().plusMillis(604800000)) // 7 Days
             .build();
         return refreshTokenRepo.save(refreshToken);
     }

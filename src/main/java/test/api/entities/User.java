@@ -1,18 +1,24 @@
 package test.api.entities;
 
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User extends BaseTimeEntity{
 
 	public static enum Role {
 		admin, user;
@@ -33,6 +39,10 @@ public class User {
 	@OneToOne
 	@JoinColumn(name = "employee_id", nullable=true)
 	private Employee employee;
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval=true)
+    @JsonIgnore
+    private List<RefreshToken> refreshTokens;
 
 	public User(){
 
@@ -75,5 +85,11 @@ public class User {
 	}
 	public void setEmployee(Employee employee) {
 		this.employee = employee;
+	}
+	public List<RefreshToken> getRefreshTokens() {
+		return refreshTokens;
+	}
+	public void setRefreshTokens(List<RefreshToken> refreshTokens) {
+		this.refreshTokens = refreshTokens;
 	}
 }

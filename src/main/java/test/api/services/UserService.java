@@ -3,11 +3,15 @@ package test.api.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import test.api.entities.Department;
 import test.api.entities.Employee;
 import test.api.entities.User;
 import test.api.exception.ResourceNotFoundException;
+import test.api.models.RegisterUserRequest;
 import test.api.models.UserRequest;
+import test.api.repositories.DepartmentRepo;
 import test.api.repositories.EmployeeRepo;
 import test.api.repositories.UserRepo;
 
@@ -19,6 +23,9 @@ public class UserService {
 
     @Autowired
     private EmployeeRepo employeeRepo;
+
+    @Autowired
+    private DepartmentRepo departmentRepo;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -34,5 +41,30 @@ public class UserService {
             employee
         );
         return userRepo.save(user);
+    }
+
+    @Transactional
+    public Employee registerUser(RegisterUserRequest registerUserRequest) {
+        Department department = departmentRepo.findById(registerUserRequest.department_id())
+        .orElseThrow(() -> new ResourceNotFoundException("Department not exist id = " + registerUserRequest.department_id()));
+
+        Employee employee = new Employee(
+            registerUserRequest.firstname(),
+            registerUserRequest.lastname(),
+            registerUserRequest.email(),
+            Employee.Gender.valueOf(registerUserRequest.gender()),
+            department
+        );
+        employeeRepo.save(employee);
+
+        User user = new User(
+            registerUserRequest.username(),
+            passwordEncoder.encode(registerUserRequest.password()),
+            User.Role.valueOf(registerUserRequest.role()),
+            employee
+        );
+        userRepo.save(user);
+
+        return employee;
     }
 }

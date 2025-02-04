@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class CorsConfig implements CorsConfigurationSource {
+    @SuppressWarnings("null")
     @Override
     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
         CorsConfiguration config = new CorsConfiguration();

@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -15,11 +18,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import test.api.entities.Employee;
 import test.api.exception.ResourceNotFoundException;
 import test.api.models.EmployeeRequest;
+import test.api.models.EmployeeTest;
 import test.api.repositories.EmployeeRepo;
 import test.api.services.EmployeeService;
 
@@ -38,6 +43,18 @@ public class EmployeeCtrl {
 		System.out.println(authentication.getName());
 		return employeeRepo.findAll();
 	}
+
+	@GetMapping("/test")
+	public List<EmployeeTest> getEmp(
+		@RequestParam(required = false, defaultValue = "") String search,
+		@RequestParam(required = false, defaultValue = "0") int page,
+		@RequestParam(required = false, defaultValue = "10") int size
+	) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<EmployeeTest> result = employeeRepo.getEmployeeDep(search, pageable);
+		return result.getContent();
+	}
+	
 
 	@GetMapping("{id}")
 	@PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")

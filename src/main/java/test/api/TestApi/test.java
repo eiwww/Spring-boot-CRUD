@@ -22,7 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.servlet.http.HttpServletRequest;
 import test.api.models.EmployeeRequest;
+
 
 
 
@@ -46,11 +48,11 @@ public class test {
     
 
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> testUploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> testUploadFile(@RequestParam("file") MultipartFile file, @ModelAttribute EmployeeRequest body) {
         if(file.isEmpty()) {
             return ResponseEntity.badRequest().body("Please select a file to upload");
         }
-
+        System.out.println(body.firstname());
         try {
             Path uploadPath = Paths.get(uploadDir);
             if(!Files.exists(uploadPath)){
@@ -66,9 +68,21 @@ public class test {
             return ResponseEntity.badRequest().body("File upload failed: " + e.getMessage());
         }
     }
+
+    @PostMapping("/image/remove/{filename}")
+    public ResponseEntity<String> testRemoveFile(@PathVariable String filename) {
+        try {
+            Path filePath = Paths.get(uploadDir).resolve(filename);
+            Files.deleteIfExists(filePath);
+            return ResponseEntity.ok("File removed successfully");
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body("Remove file failed: " + e.getMessage());
+        }
+    }
     
     @GetMapping("/image/{filename}")
-    public ResponseEntity<Resource> getImage(@PathVariable String filename) {
+    public ResponseEntity<Resource> getImage(@PathVariable String filename, HttpServletRequest request) {
+        System.out.println(request.getHeader("User-Agent"));
         try {
             Path filePath = Paths.get(uploadDir).resolve(filename);
             Resource resource = new UrlResource(filePath.toUri());
