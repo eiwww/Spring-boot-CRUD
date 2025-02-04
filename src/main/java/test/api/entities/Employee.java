@@ -15,7 +15,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "employees")
-public class Employee extends BaseTimeEntity{
+public class Employee extends BaseEntity{
 
 	public static enum Gender {
 		male, female;
