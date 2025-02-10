@@ -45,7 +45,8 @@ public class Login {
             Map<String, String> response = new HashMap<>();
             response.put("accessToken", accessToken);
             response.put("token", refreshToken.getToken());
-
+            response.put("username", authRequest.username());
+            response.put("role", refreshToken.getUser().getRole().name());
             return ResponseEntity.ok(response);
         } else {
             throw new UsernameNotFoundException("Invalid username or password");
